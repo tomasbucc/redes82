@@ -215,7 +215,7 @@ def cli_admin(client, miId, buffer):
                     idAgente = int(partes[1])
                     procs = pedirProcs(idAgente)
                     if procs == "Agente no encontrado":
-                        respuesta = procs
+                        respuesta = "ERROR" + procs
                     else:
                         respuesta = "PROC " + str(idAgente) + " " + procs
                 elif comando == "GET_METRIC" and len(partes) >= 3:
@@ -223,7 +223,7 @@ def cli_admin(client, miId, buffer):
                     nombreMetrica = partes[2]
                     valores = obtenerValores(idAgente, nombreMetrica)
                     if valores == "Agente no encontrado" or valores == "Metrica no definida":
-                        respuesta = valores
+                        respuesta = "ERROR" + valores
                     else:
                         respuesta = f"MEASUREMENTS {idAgente} {nombreMetrica} {valores}"
                 else:
