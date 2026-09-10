@@ -52,7 +52,6 @@ def lobby_atender(skt, adress):
         msj = f"SERVER {UMBRAL_CPU} {UMBRAL_MEM} {puerto}"
         skt.sendto(msj.encode('utf-8'), adress)
 
-        # Evita quedar bloqueado para siempre si el cliente nunca conecta
         skt_tcp.settimeout(15)
         client, direccionCliente = skt_tcp.accept()
     except Exception as e:
@@ -113,7 +112,7 @@ def registrar_cliente(client, direccionCliente):
     if tipoRegistro == "REGISTER":
         with s_clientes_comun:
             miId = id_actual_comun
-            id_actual_comun += 1  # FIX: ahora si es 'global', no crashea
+            id_actual_comun += 1  
             clientes_comun[miId] = {
                 "ip": direccionCliente[0],
                 "puerto": direccionCliente[1],
@@ -210,14 +209,14 @@ def cli_admin(client, miId, buffer):
             comando = partes[0] if partes else ""
 
             try:
-                if comando == "LIST" and len(partes) >= 2 and partes[1] == "AGENTS":
+                if comando == "LIST_AGENTES":
                     respuesta = listar_agentes()
-                elif comando == "GET" and len(partes) >= 3 and partes[1] == "PROC":
-                    idAgente = int(partes[2])
+                elif comando == "GET_PROC" and len(partes) >= 2:
+                    idAgente = int(partes[1])
                     respuesta = "PROC " + str(idAgente) + " " + pedirProcs(idAgente)
-                elif comando == "GET" and len(partes) >= 4 and partes[1] == "METRIC":
-                    idAgente = int(partes[2])
-                    nombreMetrica = partes[3]
+                elif comando == "GET_METRIC" and len(partes) >= 3:
+                    idAgente = int(partes[1])
+                    nombreMetrica = partes[2]
                     valores = obtenerValores(idAgente, nombreMetrica)
                     respuesta = f"MEASUREMENTS {idAgente} {nombreMetrica} {valores}"
                 else:
@@ -250,7 +249,7 @@ def obtenerValores(idAgente, nombreMetrica):
         if entrada is None:
             return "0"
         pila = entrada["pila_cpu"] if nombreMetrica == "CPU" else entrada["pila_mem"]
-        valores = list(reversed(pila))  # mas reciente primero
+        valores = list(reversed(pila)) 
     return str(len(valores)) + " " + " ".join(valores)
 
 
