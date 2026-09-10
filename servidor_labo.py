@@ -209,16 +209,23 @@ def cli_admin(client, miId, buffer):
             comando = partes[0] if partes else ""
 
             try:
-                if comando == "LIST_AGENTES":
+                if comando == "LIST_AGENTS":
                     respuesta = listar_agentes()
                 elif comando == "GET_PROC" and len(partes) >= 2:
                     idAgente = int(partes[1])
-                    respuesta = "PROC " + str(idAgente) + " " + pedirProcs(idAgente)
+                    procs = pedirProcs(idAgente)
+                    if procs == "Agente no encontrado":
+                        respuesta = procs
+                    else:
+                        respuesta = "PROC " + str(idAgente) + " " + procs
                 elif comando == "GET_METRIC" and len(partes) >= 3:
                     idAgente = int(partes[1])
                     nombreMetrica = partes[2]
                     valores = obtenerValores(idAgente, nombreMetrica)
-                    respuesta = f"MEASUREMENTS {idAgente} {nombreMetrica} {valores}"
+                    if valores == "Agente no encontrado" or valores == "Metrica no definida":
+                        respuesta = valores
+                    else:
+                        respuesta = f"MEASUREMENTS {idAgente} {nombreMetrica} {valores}"
                 else:
                     respuesta = "ERROR"
             except (ValueError, KeyError) as e:
@@ -247,8 +254,14 @@ def obtenerValores(idAgente, nombreMetrica):
     with s_clientes_comun:
         entrada = clientes_comun.get(idAgente)
         if entrada is None:
-            return "0"
-        pila = entrada["pila_cpu"] if nombreMetrica == "CPU" else entrada["pila_mem"]
+            return "Agente no encontrado"
+        if nombreMetrica == "CPU":
+            pila = entrada["pila_cpu"]
+        else: 
+            if nombreMetrica == "MEM":
+                pila = entrada["pila_mem"]
+            else:
+                return "Metrica no definida"
         valores = list(reversed(pila)) 
     return str(len(valores)) + " " + " ".join(valores)
 
@@ -257,7 +270,7 @@ def pedirProcs(idAgente):
     with s_clientes_comun:
         entrada = clientes_comun.get(idAgente)
     if entrada is None:
-        return "agente no encontrado"
+        return "Agente no encontrado"
 
     entrada["proc_event"].clear()
     enviarSeguro(entrada["socket"], entrada["send_lock"], b"GET_PROC\n")
@@ -266,7 +279,7 @@ def pedirProcs(idAgente):
         with s_clientes_comun:
             entrada_actual = clientes_comun.get(idAgente)
             return entrada_actual["ultimo_proc"] if entrada_actual else ""
-    return "timeout esperando respuesta del agente"
+    return "Timeout esperando respuesta del agente"
 
 
 if __name__ == "__main__":

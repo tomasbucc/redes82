@@ -69,7 +69,7 @@ if dirServer and puertoTCP:
                                 case "MEASUREMENTS":
                                     print(mensaje)
                                 case "ERROR":
-                                    print("Hubo un error, repetir mensaje")
+                                    print("Hubo un error, comando no reconocido")
                                 case _:
                                     print("Error mensaje respuesta no reconocido, cerrando conexion")
                                     break

@@ -17,7 +17,7 @@ def tareaMedidas(sktTCP, umbralCPU, umbralMEM):
         mem = psutil.virtual_memory().percent
         proc = ""
         for p in psutil.process_iter(['pid', 'name']):
-            proc = proc + str(p.info['pid']) + ": " + p.info['name'] + ",\n"
+            proc = proc + str(p.info['pid']) + ": " + p.info['name'] + ", "
         with lock:
             ultCPU = cpu
             ultMEM = mem
