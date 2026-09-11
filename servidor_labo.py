@@ -116,8 +116,8 @@ def registrar_cliente(client, direccionCliente):
             clientes_comun[miId] = {
                 "ip": direccionCliente[0],
                 "puerto": direccionCliente[1],
-                "pila_cpu": deque(maxlen=100),
-                "pila_mem": deque(maxlen=100),
+                "pila_cpu": deque(maxlen=10),
+                "pila_mem": deque(maxlen=10),
                 "socket": client,
                 "send_lock": threading.Lock(),
                 "ultimo_proc": "",

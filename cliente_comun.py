@@ -25,11 +25,17 @@ def tareaMedidas(sktTCP, umbralCPU, umbralMEM):
         if cpu > umbralCPU:
             alerta = f"ALERT CPU {cpu}\n"
             with lock:
-                sktTCP.sendall(alerta.encode('utf-8'))
+                try:
+                    sktTCP.sendall(alerta.encode('utf-8'))
+                except Exception as e:
+                        print(f"Error socket envio: {e}")
         if mem > umbralMEM:
             alerta = f"ALERT MEM {mem}\n"
             with lock:
-                sktTCP.sendall(alerta.encode('utf-8'))
+                try:
+                    sktTCP.sendall(alerta.encode('utf-8'))
+                except Exception as e:
+                    print(f"Error socket envio: {e}")
         time.sleep(5)
         if(sktTCP.fileno() != -1):
             cant = cant + 1

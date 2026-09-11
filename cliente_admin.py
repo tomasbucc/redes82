@@ -13,8 +13,6 @@ try:
     respServidor = resp.decode('utf-8')
     respPartes = respServidor.split()
     if len(respPartes) == 4 and respPartes[0] == "SERVER":
-        umbralCPU = int(respPartes[1])
-        umbralMEM = int(respPartes[2])
         puertoTCP = int(respPartes[3])
 except Exception as e:
     print(f"Error conexion UDP: {e}")
